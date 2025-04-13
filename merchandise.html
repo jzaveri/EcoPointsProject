@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco Merchandise</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">🌱 EcoTracker</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#points-display">Your Points</a></li>
+        <li><a href="index.html#leaderboard">Leaderboard</a></li>
+        <li><a href="index.html#recycle-game">Game</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="merchandise.html">Merchandise</a></li> <!-- New link to merchandise -->
+      </ul>
+    </nav>
+    <div class="hero-text">
+      <h1>Eco-Friendly Merchandise</h1>
+      <p>Shop our collection of sustainable products to help the planet 🌍</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="merchandise">
+      <h2>Our Eco-Friendly Products</h2>
+      <div class="product-list">
+        <!-- Reusable Water Bottle -->
+        <div class="product-item">
+          <img src="WaterBottle.jpg" alt="Reusable Water Bottle" />
+          <h3>Reusable Water Bottle</h3>
+          <p>Stay hydrated and reduce plastic waste with this eco-friendly reusable bottle.</p>
+          <p><strong>Price:</strong> 700 Points</p>
+          <button class="add-to-cart" data-product="reusable-bottle" data-price="10">Add to Cart</button>
+        </div>
+
+        <!-- Reusable Shopping Bag -->
+        <div class="product-item">
+          <img src="ReusableBag.jpg" alt="Reusable Shopping Bag" />
+          <h3>Reusable Shopping Bag</h3>
+          <p>Say no to plastic bags with this stylish and durable reusable shopping bag.</p>
+          <p><strong>Price:</strong> 950 Points</p>
+          <button class="add-to-cart" data-product="reusable-bag" data-price="15">Add to Cart</button>
+        </div>
+
+        <!-- Solar Phone Charger -->
+        <div class="product-item">
+          <img src="SolarCharge.jpg" alt="Solar Phone Charger" />
+          <h3>Solar Phone Charger</h3>
+          <p>Charge your phone sustainably with this solar-powered charger.</p>
+          <p><strong>Price:</strong> 2000 Points</p>
+          <button class="add-to-cart" data-product="solar-charger" data-price="25">Add to Cart</button>
+        </div>
+      </div>
+
+      <!-- Cart section -->
+      <section id="cart-section">
+        <h3>Your Cart</h3>
+        <ul id="cart-list"></ul>
+        <p id="cart-total">Total: 0 Points</p>
+        <button id="checkout-btn">Checkout</button>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <p>Made with 🌍 by Jaiveer and Ranganathan</p>
+  </footer>
+
+  <script>
+    let cart = [];
+    const pointsDisplay = document.getElementById('points');
+    const cartList = document.getElementById('cart-list');
+    const cartTotal = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    // Sample user's points (this should be dynamically fetched from localStorage or a backend)
+    let userPoints = parseInt(localStorage.getItem("ecoPoints")) || 0;
+    if (pointsDisplay) {
+      pointsDisplay.textContent = userPoints; // Display current points
+    }
+
+    const products = {
+      "reusable-bottle": { name: "Reusable Water Bottle", price: 700, img: "WaterBottle.jpg" },
+      "reusable-bag": { name: "Reusable Shopping Bag", price: 950, img: "ReusableBag.jpg" },
+      "solar-charger": { name: "Solar Phone Charger", price: 2000, img: "SolarCharge.jpg" }
+    };
+
+    // Update Cart Display
+    function updateCart() {
+      cartList.innerHTML = "";
+      let totalPoints = 0;
+
+      cart.forEach(product => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${product.name} - ${product.price} Points`;
+        cartList.appendChild(listItem);
+        totalPoints += product.price;
+      });
+
+      cartTotal.textContent = `Total: ${totalPoints} Points`;
+
+      // Enable checkout if there are items in the cart
+      checkoutBtn.disabled = cart.length === 0;
+    }
+
+    // Add product to cart
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', (event) => {
+        const productId = event.target.dataset.product;
+        const product = products[productId];
+
+        // Add product to the cart
+        cart.push(product);
+        updateCart();
+      });
+    });
+
+    // Checkout functionality
+    checkoutBtn.addEventListener('click', () => {
+      let totalPoints = cart.reduce((total, product) => total + product.price, 0);
+
+      if (totalPoints <= userPoints) {
+        // Deduct points if user has enough
+        userPoints -= totalPoints;
+        localStorage.setItem("ecoPoints", userPoints); // Save the new points balance
+
+        // Update points display
+        if (pointsDisplay) {
+          pointsDisplay.textContent = userPoints;
+        }
+
+        // Clear cart
+        cart = [];
+        updateCart();
+
+        alert(`Purchase successful! You've spent ${totalPoints} points. Thank you for supporting eco-friendly products!`);
+      } else {
+        alert("You don't have enough points to make this purchase.");
+      }
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco Points Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">🌱 EcoTracker</div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="#points-display">Your Points</a></li> 
+        <li><a href="#leaderboard">Leaderboard</a></li>
+        <li><a href="#recycle-game">Game</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="merchandise.html">Merchandise</a></li>
+      </ul>
+    </nav>
+    <div class="hero-text">
+      <h1><u>Track Your Eco Actions</u></h1>
+      <p>Make <i><b>GREEN</b></i> choices and earn points for a cleaner planet.</p>
+    </div>
+  </header>
+
+  <main>
+    <!-- Eco Points Section -->
+    <section class="card" id="log">
+      <h2>💡 Log an Eco Action</h2>
+      <form id="actionForm">
+        <label for="action">Choose an Action:</label>
+        <select id="action" required>
+          <option value="">-- Select predefined action --</option>
+          <option value="bike">🚴 Biked instead of driving (+10 pts)</option>
+          <option value="reusable">🧃 Used reusable bottle (+5 pts)</option>
+          <option value="public-transport">🚌 Took public transport (+8 pts)</option>
+          <option value="no-plastic">🚫 Avoided single-use plastic (+6 pts)</option>
+          <option value="custom">➕ Add your own task</option>
+        </select>
+    
+        <div id="customTaskSection" style="display: none;">
+          <label for="customTask">Custom Task:</label>
+          <input type="text" id="customTask" placeholder="E.g., Planted a tree" />
+    
+          <label for="customPoints">Points:</label>
+          <input type="number" id="customPoints" placeholder="Points" min="1" max="2" value="2" />
+          <small>⚠️ Points for custom task: 2</small>
+        </div>
+    
+        <button type="submit">Add Action</button>
+      </form>
+      
+    </section>
+    <section class="card" id="rewards">
+      <h2>Your Rewards</h2>
+      <p id="rewardMessage"><b>Earn rewards as you reach point milestones!</b></p>
+      <ul id="milestones">
+        <li>25 Points: Reusable Eco Bag 👜</li>
+        <li>100 Points: Eco-Friendly Water Bottle 🎁</li>
+        <li>300 Points: Donation to Tree Planting 🌳</li>
+        <li>500 Points: Tree of Your Choice 🌲</li>
+        <li>1000 Points: Electric Toothbrush 🪥</li>
+      </ul>
+    </section>
+    
+    
+    
+
+    <!-- Points and Rewards Section -->
+    <section class="card" id="points-display">
+      <h2>🌟 Your Points</h2>
+      <p class="points" id="points">0</p>
+    </section>
+
+    <section class="card" id="leaderboard">
+      <h2>🏆 Leaderboard</h2>
+      <ol id="leaderboard-list">
+        <li>🌿 Alice – 40 pts</li>
+        <li>🌿 Bob – 35 pts</li>
+        <li>🌿 <b>You –</b> <span id="yourPointsLB">0</span> pts</li>
+        <li>🌿 John – 10 pts</li>
+        <li>🌿 Ken – 40 pts</li>
+        <li>🌿 Sunny – 50 pts</li>
+        <li>🌿 Katlyn – 89 pts</li>
+      </ol>
+    </section>
+    <!-- Recycle Challenge Game Section -->
+    <section class="card" id="recycle-game">
+      <h2>♻️ Recycle Challenge</h2>
+      <p>Drag the items into the correct recycling bins to earn points!</p>
+      
+      <div class="game-container">
+        <div class="bin" id="paper-bin">📄 Paper</div>
+        <div class="bin" id="plastic-bin">🛢️ Plastic</div>
+        <div class="bin" id="glass-bin">🍷 Glass</div>
+
+        <div class="items-container">
+          <img src="bottle.png" alt="Plastic Bottle" class="draggable-item" id="plastic" />
+          <img src="newspaper.png" alt="Newspaper" class="draggable-item" id="paper" />
+          <img src="glass-cup.png" alt="Glass Cup" class="draggable-item" id="glass" />
+        </div>
+      </div>
+      <p>Your score: <span id="game-score">0</span> points</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Made with 🌍 by Jaiveer and Ranganathan</p>
+  </footer>
+
+  <script src="game.js"></script>
+  <script>
+    let userPoints = 0;
+
+const actionForm = document.getElementById('actionForm');
+const pointsDisplay = document.getElementById('points');
+const yourPointsLB = document.getElementById('yourPointsLB');
+const customTaskSection = document.getElementById('customTaskSection'); // For showing custom task form
+const customTaskInput = document.getElementById('customTask'); // For custom task input
+const customPointsInput = document.getElementById('customPoints'); // For custom points input
+
+const actionPoints = {
+  "bike": 10,
+  "reusable": 5,
+  "public-transport": 8,
+  "no-plastic": 6
+};
+
+// Show the custom task section when "Add your own task" is selected
+const actionSelect = document.getElementById('action');
+actionSelect.addEventListener('change', function () {
+  if (this.value === "custom") {
+    customTaskSection.style.display = 'block'; // Show custom task section
+  } else {
+    customTaskSection.style.display = 'none'; // Hide custom task section if another option is selected
+  }
+});
+
+// Handle form submission
+actionForm.addEventListener('submit', function (e) {
+  e.preventDefault();
+  const action = actionSelect.value; // Get the selected action
+  
+  // If predefined action is selected
+  if (action && actionPoints[action]) {
+    userPoints += actionPoints[action];
+    pointsDisplay.textContent = userPoints;
+    yourPointsLB.textContent = userPoints;
+    alert(`+${actionPoints[action]} points! Keep it up 🌿`);
+  }
+
+  // If custom action is selected
+  else if (action === "custom") {
+    const customTask = customTaskInput.value;
+    const customPoints = parseInt(customPointsInput.value);
+    if (customTask && customPoints) {
+      userPoints += customPoints;
+      pointsDisplay.textContent = userPoints;
+      yourPointsLB.textContent = userPoints;
+      alert(`+${customPoints} points for your custom task: ${customTask}! 🌿`);
+    } else {
+      alert("Please provide a valid custom task and points.");
+    }
+  }
+
+  // Reset the form after submitting
+  actionForm.reset();
+  customTaskSection.style.display = 'none'; // Hide custom task section after submission
+});
+
+  </script>
+</body>
+</html>
